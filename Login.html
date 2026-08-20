@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Welcome Back UI</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Background */
+body {
+  height: 100vh;
+  background: linear-gradient(-45deg, #1e1b4b, #4c1d95, #0f172a, #020617);
+  background-size: 400% 400%;
+  animation: gradientMove 25s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🌊 Waves */
+.wave {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+  will-change: transform;
+  
+}
+
+.wave2 {
+  bottom: -40px;
+  opacity: 0.8;
+  
+}
+
+.wave path {
+  filter: blur(6px);
+}
+
+/* Language Selector Fixed */
+.lang-select {
+  position: fixed; /* changed from absolute */
+  top: 20px;
+  right: 20px;
+  z-index: 2000; /* above everything */
+  display: flex;
+  flex-direction: column;
+}
+
+.selected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.selected:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.options {
+  margin-top: 5px;
+  background: rgba(15,23,42,0.95);
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.options div {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.options div:hover {
+  background: rgba(99,102,241,0.2);
+}
+
+.lang-select img {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+}
+/* Card */
+.container {
+  width: 360px;
+  padding: 35px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(35px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* Heading */
+.container h2 {
+  text-align: center;
+  font-size: 28px;
+  background: linear-gradient(45deg, #ec4899, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.container p {
+  text-align: center;
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 25px;
+}
+
+/* Input */
+.input-box {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-box i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #ec4899;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 12px 12px 12px 38px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.06);
+  color: white;
+}
+
+.input-box input:focus {
+  box-shadow: 0 0 15px rgba(236,72,153,0.6);
+}
+
+/* Options */
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(45deg, #ec4899, #a855f7);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Links */
+.options-row a,
+.footer a {
+  color: #ec4899;
+  text-decoration: none;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Social */
+.social {
+  display: flex;
+  gap: 10px;
+}
+
+.social button {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+/* 🔥 LOADING */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2,6,23,0.7);
+  backdrop-filter: blur(10px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.loading-card {
+  padding: 30px 40px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top: 4px solid #ec4899;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ✅ SUCCESS */
+.success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.success-card {
+  padding: 30px 40px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  color: white;
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 🔥 IMPROVED CHECKMARK */
+.checkmark {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #22c55e;
+  position: relative;
+  margin: auto;
+  margin-bottom: 15px;
+  animation: scaleIn 0.4s ease;
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.checkmark::after {
+  content: '';
+  position: absolute;
+  left: 22px;
+  top: 15px;
+  width: 14px;
+  height: 28px;
+  border-right: 4px solid #22c55e;
+  border-bottom: 4px solid #22c55e;
+  transform: rotate(45deg) scale(0);
+  transform-origin: center;
+  animation: drawTick 0.4s ease forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes drawTick {
+  to {
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+/* 🔵 CHAT BUTTON */
+/* 🔵 CHAT BUTTON (SMALL ICON) */
+#chatBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;        /* smaller */
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ec4899, #a855f7);
+  border: none;
+  color: white;
+  font-size: 22px;    /* smaller icon */
+  cursor: pointer;
+  z-index: 1100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+/* 💬 CHAT POPUP (BIGGER LIKE REGISTER PAGE) */
+/* 💬 CHAT POPUP (LIGHTER BACKGROUND) */
+#chatPopup {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  width: 340px;
+  height: 420px;
+  background: rgba(255,255,255,0.08);      /* lighter, semi-transparent */
+  backdrop-filter: blur(20px);              /* blur effect */
+  border-radius: 15px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1100;
+  border: 1px solid rgba(255,255,255,0.2);  /* light border */
+}
+
+/* Header */
+#chatHeader {
+  background: linear-gradient(45deg, #ec4899, #a855f7); /* keeps it stylish */
+  padding: 12px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Messages */
+#chatMessages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: white;
+}
+
+/* Input area */
+#chatInput {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.2); /* light border */
+}
+
+#chatInput input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.06); /* softer background for input */
+  color: white;
+}
+
+#chatInput button {
+  padding: 10px 15px;
+  border: none;
+  background: linear-gradient(45deg, #ec4899, #a855f7);
+  color: white;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌊 Wave 1 -->
+<svg class="wave" viewBox="0 0 1440 320">
+  <path fill="#ec4899" fill-opacity="0.35">
+    <animate attributeName="d" dur="12s" repeatCount="indefinite"
+    values="M0,160L60,186C120,210,240,260,360,250C480,240,600,180,720,170C840,160,960,190,1080,200C1200,210,1320,200,1440,190L1440,320L0,320Z;
+    M0,200L60,180C120,160,240,120,360,130C480,140,600,180,720,210C840,240,960,240,1080,210C1200,180,1320,120,1440,90L1440,320L0,320Z;
+    M0,160L60,186C120,210,240,260,360,250C480,240,600,180,720,170C840,160,960,190,1080,200C1200,210,1320,200,1440,190L1440,320L0,320Z">
+    </animate>
+  </path>
+</svg>
+
+<!-- 🌊 Wave 2 -->
+<svg class="wave wave2" viewBox="0 0 1440 320">
+  <path fill="#a855f7" fill-opacity="0.25">
+    <animate attributeName="d" dur="18s" repeatCount="indefinite"
+    values="M0,180L80,200C160,220,320,260,480,250C640,240,800,180,960,170C1120,160,1280,190,1440,210L1440,320L0,320Z;
+    M0,220L80,200C160,180,320,140,480,150C640,160,800,200,960,230C1120,260,1280,260,1440,230L1440,320L0,320Z;
+    M0,180L80,200C160,220,320,260,480,250C640,240,800,180,960,170C1120,160,1280,190,1440,210L1440,320L0,320Z">
+    </animate>
+  </path>
+</svg>
+
+<!-- Language -->
+<div class="lang-select">
+  <div class="selected" onclick="toggleDropdown()">
+    <img id="flag" src="https://flagcdn.com/w20/gb.png">
+    <span id="langText">English</span>
+  </div>
+  <div class="options" id="options"></div>
+</div>
+
+<div class="container">
+  <h2 id="title">Welcome Back</h2>
+  <p id="subtitle">Login to continue</p>
+
+ <form action="login.php" method="POST">
+
+  <div class="input-box">
+    <i class="fa fa-envelope"></i>
+   <input type="text" id="email" name="email" placeholder="Email" required>
+  </div>
+
+  <div class="input-box">
+    <i class="fa fa-lock"></i>
+    <input type="password" id="password" name="password" placeholder="Password" required>
+  </div>
+
+  <div class="options-row">
+    <label id="remember"><input type="checkbox"> Remember me</label>
+    <a href="#" id="forgot">Forgot?</a>
+  </div>
+
+  <button type="submit" id="loginBtn">Login</button>
+
+</form>
+
+  <div class="divider" id="divider">or continue with</div>
+
+  <div class="social">
+    <button onclick="socialLogin('Google')"><i class="fab fa-google"></i></button>
+    <button onclick="socialLogin('Facebook')"><i class="fab fa-facebook"></i></button>
+    <button onclick="socialLogin('Twitter')"><i class="fab fa-twitter"></i></button>
+  </div>
+
+  <div class="footer" id="footer">
+    Don’t have an account? <a href="register.html">Sign up</a>
+  </div>
+</div>
+
+<!-- 🔥 LOADING -->
+<div id="loadingBox" class="loading-overlay" style="display:none;">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <p id="loadingText">Logging in...</p>
+  </div>
+</div>
+
+<!-- ✅ SUCCESS -->
+<div id="successBox" class="success-overlay" style="display:none;">
+  <div class="success-card">
+    <div class="checkmark"></div>
+    <p>Login Successful</p>
+  </div>
+</div>
+
+<!-- 🔵 CHAT BUTTON -->
+<button id="chatBtn">💬</button>
+<div id="chatPopup">
+  <div id="chatHeader">Support</div>
+  <div id="chatMessages"></div>
+  <div id="chatInput">
+    <input type="text" id="chatMessage" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+// Language
+const languages = [
+  {code:"en", name:"English", flag:"gb"},
+  {code:"hi", name:"Hindi", flag:"in"},
+  {code:"ko", name:"Korean", flag:"kr"},
+  {code:"ja", name:"Japanese", flag:"jp"},
+  {code:"zh", name:"Chinese", flag:"cn"}
+];
+
+let currentLang = localStorage.getItem("lang") || "en";
+
+const translations = {
+  en:{title:"Welcome Back",subtitle:"Login to continue",email:"Email",password:"Password",remember:"Remember me",forgot:"Forgot?",login:"Login",divider:"or continue with",footer:"Don’t have an account?"},
+  hi:{title:"वापसी पर स्वागत है",subtitle:"जारी रखने के लिए लॉगिन करें",email:"ईमेल",password:"पासवर्ड",remember:"मुझे याद रखें",forgot:"पासवर्ड भूल गए?",login:"लॉगिन",divider:"या जारी रखें",footer:"खाता नहीं है?"},
+  ko:{title:"다시 오신 것을 환영합니다",subtitle:"계속하려면 로그인하세요",email:"이메일",password:"비밀번호",remember:"기억하기",forgot:"비밀번호를 잊으셨나요?",login:"로그인",divider:"또는 계속",footer:"계정이 없으신가요?"},
+  ja:{title:"おかえりなさい",subtitle:"続行するにはログインしてください",email:"メール",password:"パスワード",remember:"ログイン状態を保持",forgot:"パスワードを忘れましたか？",login:"ログイン",divider:"または続行",footer:"アカウントをお持ちでないですか？"},
+  zh:{title:"欢迎回来",subtitle:"请登录继续",email:"电子邮件",password:"密码",remember:"记住我",forgot:"忘记密码？",login:"登录",divider:"或继续使用",footer:"没有账户？"}
+};
+
+function changeLang(lang){
+  document.getElementById("title").innerText = translations[lang].title;
+  document.getElementById("subtitle").innerText = translations[lang].subtitle;
+  document.getElementById("email").placeholder = translations[lang].email;
+  document.getElementById("password").placeholder = translations[lang].password;
+  document.getElementById("remember").innerHTML = `<input type="checkbox"> ${translations[lang].remember}`;
+  document.getElementById("forgot").innerText = translations[lang].forgot;
+  document.getElementById("loginBtn").innerText = translations[lang].login;
+  document.getElementById("divider").innerText = translations[lang].divider;
+  document.getElementById("footer").innerHTML = `${translations[lang].footer} <a href='register.html'>Sign up</a>`;
+  document.getElementById("flag").src = `https://flagcdn.com/w20/${languages.find(l=>l.code===lang).flag}.png`;
+  document.getElementById("langText").innerText = languages.find(l=>l.code===lang).name;
+  localStorage.setItem("lang", lang);
+}
+
+function updateDropdown() {
+  // Update the selected language (shown at top-right)
+  document.getElementById("flag").src = selectedLang.flag;
+  document.getElementById("langText").textContent = selectedLang.name;
+  
+  // Clear the existing dropdown list
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  // Populate the dropdown but skip the selected language
+  languages.forEach(lang => {
+    if (lang.name !== selectedLang.name) { // Skip the selected language
+      const div = document.createElement('div');
+      div.innerHTML = `<img src="${lang.flag}"> ${lang.name}`;
+      
+      // Handle language click event
+      div.onclick = () => {
+        selectedLang = lang;
+        updateDropdown(); // Re-populate dropdown with updated selected language
+        optionsDiv.style.display = 'none'; // Close dropdown after selection
+      };
+
+      // Append the language to the dropdown
+      optionsDiv.appendChild(div);
+    }
+  });
+}
+
+// Toggle the dropdown visibility when the selected language is clicked
+function toggleDropdown() {
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.style.display = (optionsDiv.style.display === 'flex') ? 'none' : 'flex';
+}
+
+const optionsContainer = document.getElementById("options");
+languages.forEach(l=>{
+  const div = document.createElement("div");
+  div.innerHTML = `<img src='https://flagcdn.com/w20/${l.flag}.png'><span>${l.name}</span>`;
+  div.onclick = ()=>{changeLang(l.code); toggleDropdown();};
+  optionsContainer.appendChild(div);
+});
+
+changeLang(currentLang);
+
+// 🔥 Login & Social Login Simulation
+function showLoading(){
+  document.getElementById("loadingBox").style.display="flex";
+  setTimeout(()=>{
+    document.getElementById("loadingBox").style.display="none";
+    document.getElementById("successBox").style.display="flex";
+    setTimeout(()=>{document.getElementById("successBox").style.display="none";},2000);
+  },2000);
+}
+
+
+
+function socialLogin(name){
+  document.getElementById("loadingText").innerText = `Logging in with ${name}...`;
+  showLoading();
+
+  
+}
+
+// 🔵 Chat
+const chatBtn = document.getElementById("chatBtn");
+const chatPopup = document.getElementById("chatPopup");
+const chatMessages = document.getElementById("chatMessages");
+chatBtn.onclick = ()=>{chatPopup.style.display = chatPopup.style.display==="flex"?"none":"flex";};
+
+function sendMessage(){
+  const input = document.getElementById("chatMessage");
+  const msg = input.value.trim();
+  if(msg==="") return;
+  const div = document.createElement("div");
+  div.innerHTML = `<b>You:</b> ${msg}`;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  input.value = "";
+  
+  // Simple bot reply
+  setTimeout(()=>{
+    const botDiv = document.createElement("div");
+    botDiv.innerHTML = `<b>Support:</b> Thank you for your message!`;
+    chatMessages.appendChild(botDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  },800);
+}
+
+window.onload = function(){
+
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get("status");
+
+  console.log("STATUS:", status);
+
+  if(status === "success"){
+
+    const loading = document.getElementById("loadingBox");
+    const success = document.getElementById("successBox");
+
+    if(!loading || !success){
+      alert("Animation elements missing!");
+      return;
+    }
+
+    // 🔥 show loading
+    loading.style.display = "flex";
+
+    setTimeout(()=>{
+      loading.style.display = "none";
+      success.style.display = "flex";
+
+      // 🔥 ab delay de (IMPORTANT)
+      setTimeout(()=>{
+        window.location.href = "home.html";
+      },2000);
+
+    },2000);
+  }
+
+  if(status === "wrong"){
+
+  const loading = document.getElementById("loadingBox");
+  const success = document.getElementById("successBox");
+
+  loading.style.display = "flex";
+
+  setTimeout(()=>{
+    loading.style.display = "none";
+
+    success.style.display = "flex";
+
+    // ❌ change text
+    success.querySelector("p").innerText = "Wrong Password ❌";
+
+    // ❌ red style
+    success.querySelector(".checkmark").style.borderColor = "red";
+    success.querySelector(".checkmark").style.boxShadow = "0 0 10px red";
+
+    setTimeout(()=>{
+      success.style.display = "none";
+
+      // 🔥 RESET BACK TO NORMAL (IMPORTANT)
+      success.querySelector("p").innerText = "Login Successful";
+      success.querySelector(".checkmark").style.borderColor = "#22c55e";
+
+    },2000);
+
+  },1500);
+}
+
+  if(status === "notfound"){
+  const loading = document.getElementById("loadingBox");
+  const success = document.getElementById("successBox");
+
+  loading.style.display = "flex";
+
+  setTimeout(()=>{
+    loading.style.display = "none";
+
+    success.style.display = "flex";
+    success.querySelector("p").innerText = "User Not Found ❌";
+
+    setTimeout(()=>{
+      success.style.display = "none";
+      success.querySelector("p").innerText = "Login Successful";
+    },2000);
+
+  },1500);
+}
+
+  if(status === "empty"){
+    alert("Fill all fields");
+  }
+
+}
+
+</script>
+
+</body>
+</html>

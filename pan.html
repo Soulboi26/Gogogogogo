@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aadhaar Ultra with Themes</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+/* ----------------- GENERAL RESET ----------------- */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+:root{
+  --bg-gradient: linear-gradient(-45deg,#1e1b4b,#4c1d95,#0f172a,#020617);
+  --container-bg: rgba(255,255,255,0.08);
+  --text-color: white;
+  --button-bg: linear-gradient(45deg,#ec4899,#a855f7);
+  --header-bg: rgba(0,0,0,0.25);
+  --header-text: white;
+  --wave1: #ec4899;
+  --wave2: #a855f7;
+}
+body{
+  min-height:100vh;
+  background: var(--bg-gradient);
+  color: var(--text-color);
+  transition: background 0.8s ease, color 0.8s ease;
+  padding-top: 70px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction: column;
+}
+
+/* ----------------- HEADER ----------------- */
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--header-bg);
+  color: var(--header-text);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  z-index: 1000;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+.header-left h1 { font-size: 20px; color: var(--header-text); }
+.header-center nav { display:flex; gap:25px; }
+.header-center nav a {
+  color: var(--header-text);
+  text-decoration:none;
+  font-weight:bold;
+  font-size:14px;
+  position: relative;
+  padding:5px 0;
+  transition: color 0.3s;
+}
+.header-center nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background: #ec4899;
+  transition: width 0.3s ease;
+}
+.header-center nav a:hover::after { width: 100%; }
+.header-center nav a.active { color: #ec4899; }
+.header-center nav a.active::after { width: 100%; }
+
+.header-right { display:flex; gap:10px; align-items:center; }
+/* Selector dropdown */
+.selected{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,0.08);
+  color: var(--header-text);
+  padding:5px 10px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  transition:0.3s;
+  font-size: 13px;
+}
+.selected:hover{ background: rgba(255,255,255,0.18); }
+.options{
+  margin-top:5px;
+  background:rgba(15,23,42,0.95);
+  border-radius:10px;
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transition:0.3s ease;
+  position:absolute;
+  width:100%;
+  z-index:9999;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.options.show{ max-height:250px; opacity:1; }
+.options div{
+  padding:6px 10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  color:var(--header-text);
+  transition:0.3s;
+  font-size: 13px;
+}
+.options div:hover{
+  background:rgba(255,255,255,0.15);
+  border-radius:8px;
+}
+.lang-select img, .theme-select img{width:18px;}
+
+/* ----------------- WAVES ----------------- */
+.wave,.wave2{
+  position:absolute;
+  bottom:-20px;
+  width:100%;
+  z-index:0;
+  pointer-events:none;
+}
+.wave2{bottom:-40px;opacity:0.8;}
+.wave path{filter:blur(6px); transition: fill 0.8s ease; }
+
+/* ----------------- CARD CONTAINER ----------------- */
+.container{
+  width:380px;
+  max-width:90%;
+  padding:20px;
+  border-radius:30px;
+  background: var(--container-bg);
+  backdrop-filter:blur(50px);
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:0 30px 100px rgba(0,0,0,0.9);
+  color: var(--text-color);
+  text-align:center;
+  animation:fadeIn 1s ease;
+  transition: background 0.8s ease, color 0.8s ease;
+}
+
+/* ----------------- CARD FLIP ----------------- */
+.card-container {
+    perspective:1000px;
+}
+.card {
+    width:100%;
+    height:230px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:0.8s;
+}
+.card:hover { transform:rotateY(180deg); }
+.front, .back {
+    position:absolute;
+    width:100%;
+    height:100%;
+    backface-visibility:hidden;
+    background:white;
+    border-radius:18px;
+    padding:15px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.6);
+}
+.back { transform:rotateY(180deg); }
+
+/* HEADER INSIDE CARD */
+.header-card {
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+.logo { width:40px; }
+.tri {
+    flex:1;
+    border-radius:3px;
+    overflow:hidden;
+    border:1px solid #ccc;
+}
+.tri div { height:5px; }
+.o{background:#ff9933;}
+.w{background:#ffffff;}
+.g{background:#138808;}
+
+/* MAIN CARD */
+.main {
+    display:flex;
+    margin-top:10px;
+    justify-content:space-between;
+}
+.photo img { width:80px;height:90px;border-radius:10px;object-fit:cover; }
+.details { flex:1;margin-left:10px;font-size:13px; }
+.number { font-size:18px;font-weight:bold; }
+.qr img { width:70px;height:70px; }
+
+/* FOOTER CARD */
+.footer { margin-top:10px;border-top:2px solid red;text-align:center;padding-top:5px;font-size:14px; }
+.footer span { color:red;font-weight:bold; }
+
+/* BUTTONS */
+.btns { margin-top:20px; display:flex; gap:10px; justify-content:center; }
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:10px;
+  background: var(--button-bg);
+  color: var(--text-color);
+  cursor:pointer;
+  transition: transform 0.3s, background 0.5s;
+}
+button:hover{ transform:scale(1.05); box-shadow:0 0 20px rgba(168,85,247,0.6); }
+button:active{transform:scale(0.98);}
+
+/* ANIMATIONS */
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(30px) scale(0.95);}
+  to{opacity:1; transform:translateY(0) scale(1);}
+}
+@media(max-width:700px){
+  .container{width:90%; padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="header-left"><h1>Aadhaar Generator</h1></div>
+  <div class="header-center">
+    <nav>
+      <a href="home.html" class="active">Home</a>
+    </nav>
+  </div>
+  <div class="header-right">
+    <div class="lang-select">
+      <div class="selected" onclick="toggleDropdown('lang')">
+        <img id="flag" src="https://flagcdn.com/w20/gb.png">
+        <span id="langText">English</span>
+      </div>
+      <div class="options" id="langOptions"></div>
+    </div>
+    <div class="theme-select">
+      <div class="selected" onclick="toggleDropdown('theme')">
+        <span id="themeText">🌑 Dark</span>
+      </div>
+      <div class="options" id="themeOptions"></div>
+    </div>
+  </div>
+</header>
+
+<!-- WAVES -->
+<svg class="wave" viewBox="0 0 1440 320"><path fill="var(--wave1)" fill-opacity="0.35">
+<animate attributeName="d" dur="12s" repeatCount="indefinite"
+values="M0,160L60,186C120,210,240,260,360,250C480,240,600,180,720,170C840,160,960,190,1080,200C1200,210,1320,200,1440,190L1440,320L0,320Z;
+M0,200L60,180C120,160,240,120,360,130C480,140,600,180,720,210C840,240,960,240,1080,210C1200,180,1320,120,1440,90L1440,320L0,320Z;
+M0,160L60,186C120,210,240,260,360,250C480,240,600,180,720,170C840,160,960,190,1080,200C1200,210,1320,200,1440,190L1440,320L0,320Z"></animate></path></svg>
+
+<svg class="wave wave2" viewBox="0 0 1440 320"><path fill="var(--wave2)" fill-opacity="0.25">
+<animate attributeName="d" dur="18s" repeatCount="indefinite"
+values="M0,180L80,200C160,220,320,260,480,250C640,240,800,180,960,170C1120,160,1280,190,1440,210L1440,320L0,320Z;
+M0,220L80,200C160,180,320,140,480,150C640,160,800,200,960,230C1120,260,1280,260,1440,230L1440,320L0,320Z;
+M0,180L80,200C160,220,320,260,480,250C640,240,800,180,960,170C1120,160,1280,190,1440,210L1440,320L0,320Z"></animate></path></svg>
+
+<!-- MAIN CONTAINER -->
+<div class="container card-container">
+  <div class="card" id="card">
+    <div class="front">
+      <div class="header-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" class="logo">
+        <div class="tri">
+          <div class="o"></div><div class="w"></div><div class="g"></div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="photo"><img id="photo"></div>
+        <div class="details">
+          <b id="name"></b><br>
+          DOB: <span id="dob"></span><br>
+          Gender: <span id="gender"></span>
+          <div class="number" id="aadhaar"></div>
+        </div>
+        <div class="qr"><img id="qr"></div>
+      </div>
+      <div class="footer"><span>आधार</span> - आम आदमी का अधिकार</div>
+    </div>
+    <div class="back">
+      <h3 style="text-align:center;">Aadhaar Details</h3>
+      <p><b>Name:</b> <span id="b_name"></span></p>
+      <p><b>DOB:</b> <span id="b_dob"></span></p>
+      <p><b>Gender:</b> <span id="b_gender"></span></p>
+      <p><b>Aadhaar:</b> <span id="b_aadhaar"></span></p>
+    </div>
+  </div>
+</div>
+
+<!-- BUTTONS -->
+<div class="btns">
+  <button onclick="gen()">Generate</button>
+  <button onclick="download()">Download</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ----------------- LANGUAGES -----------------
+const languages=[
+  {code:"en",name:"English",flag:"gb"},
+  {code:"hi",name:"Hindi",flag:"in"},
+  {code:"ko",name:"Korean",flag:"kr"},
+  {code:"ja",name:"Japanese",flag:"jp"},
+  {code:"zh",name:"Chinese",flag:"cn"}
+];
+let currentLang=localStorage.getItem("lang")||"en";
+const translations={
+  en:{gen:"Generate",download:"Download"},
+  hi:{gen:"जनरेट करें",download:"डाउनलोड"},
+  ko:{gen:"생성",download:"다운로드"},
+  ja:{gen:"生成",download:"ダウンロード"},
+  zh:{gen:"生成",download:"下载"}
+};
+function changeLang(lang){
+  document.querySelectorAll(".btns button")[0].innerText=translations[lang].gen;
+  document.querySelectorAll(".btns button")[1].innerText=translations[lang].download;
+}
+function toggleDropdown(type){
+  if(type==='lang') document.getElementById('langOptions').classList.toggle('show');
+  if(type==='theme') document.getElementById('themeOptions').classList.toggle('show');
+}
+function setLang(code){
+  const langObj=languages.find(l=>l.code===code);
+  currentLang=code;
+  localStorage.setItem("lang",code);
+  document.getElementById("flag").src="https://flagcdn.com/w20/"+langObj.flag+".png";
+  document.getElementById("langText").innerText=langObj.name;
+  changeLang(code);
+  renderLangOptions();
+  document.getElementById("langOptions").classList.remove("show");
+}
+function renderLangOptions(){
+  let container=document.getElementById('langOptions');
+  container.innerHTML="";
+  languages.forEach(lang=>{
+    if(lang.code!==currentLang){
+      const div=document.createElement("div");
+      div.innerHTML='<img src="https://flagcdn.com/w20/'+lang.flag+'.png"> '+lang.name;
+      div.addEventListener("click",(e)=>{ e.stopPropagation(); setLang(lang.code); });
+      container.appendChild(div);
+    }
+  });
+}
+
+// ----------------- THEMES -----------------
+const themes=[
+{name:"Light",icon:"☀️",colors:["#fefcea","#f1da36","#fff7e6","#fff3c4"],container:"rgba(0,0,0,0.08)",text:"#111",button:"linear-gradient(45deg,#f1da36,#fefcea)",header:"rgba(255,255,255,0.2)",headerText:"#111",wave1:"#f1da36",wave2:"#fefcea",accent:"#f1da36"},
+ {name:"Dark",icon:"🌑",colors:["#1e1b4b","#4c1d95","#0f172a","#020617"],container:"rgba(255,255,255,0.08)",text:"white",button:"linear-gradient(45deg,#ec4899,#a855f7)",header:"rgba(0,0,0,0.25)",headerText:"white",wave1:"#ec4899",wave2:"#a855f7",accent:"#ec4899"},
+{name:"Sunset",icon:"🌇",colors:["#ff9a9e","#fad0c4","#ffb347","#ffcc70"],container:"rgba(0,0,0,0.15)",text:"#111",button:"linear-gradient(45deg,#ff9a9e,#ffb347)",header:"rgba(0,0,0,0.15)",headerText:"#111",wave1:"#ff9a9e",wave2:"#ffb347",accent:"#ff9a9e"},
+{name:"Ocean",icon:"🌊",colors:["#00c6ff","#0072ff","#00f2fe","#009ffd"],container:"rgba(255,255,255,0.15)",text:"#fff",button:"linear-gradient(45deg,#00c6ff,#0072ff)",header:"rgba(0,0,0,0.25)",headerText:"white",wave1:"#00c6ff",wave2:"#0072ff",accent:"#00c6ff"},
+{name:"Forest",icon:"🌲",colors:["#134E5E","#71B280","#1f4037","#99A799"],container:"rgba(255,255,255,0.15)",text:"#fff",button:"linear-gradient(45deg,#134E5E,#71B280)",header:"rgba(0,0,0,0.25)",headerText:"white",wave1:"#134E5E",wave2:"#71B280",accent:"#134E5E"}
+];
+let currentTheme=0;
+function setTheme(index){
+  const t = themes[index];
+  document.documentElement.style.setProperty('--bg-gradient', `linear-gradient(-45deg,${t.colors.join(",")})`);
+  document.documentElement.style.setProperty('--container-bg', t.container);
+  document.documentElement.style.setProperty('--text-color', t.text);
+  document.documentElement.style.setProperty('--button-bg', t.button);
+  document.documentElement.style.setProperty('--header-bg', t.header);
+  document.documentElement.style.setProperty('--header-text', t.headerText);
+  document.documentElement.style.setProperty('--wave1', t.wave1);
+  document.documentElement.style.setProperty('--wave2', t.wave2);
+  document.getElementById("themeText").innerText = t.icon + " " + t.name;
+  renderThemeOptions();
+  currentTheme=index;
+}
+function renderThemeOptions(){
+  let container=document.getElementById('themeOptions');
+  container.innerHTML="";
+  themes.forEach((th,i)=>{
+    if(i!==currentTheme){
+      const div=document.createElement("div");
+      div.innerText=th.icon + " " + th.name;
+      div.addEventListener("click",(e)=>{ e.stopPropagation(); setTheme(i); });
+      container.appendChild(div);
+    }
+  });
+}
+
+// ----------------- NAV -----------------
+const navLinks = document.querySelectorAll(".header-center nav a");
+navLinks.forEach(link => { link.addEventListener("click", (e) => { navLinks.forEach(l => l.classList.remove("active")); link.classList.add("active"); }); });
+navLinks[0].classList.add("active");
+
+// ----------------- CARD GENERATE -----------------
+function r(min,max){return Math.floor(Math.random()*(max-min)+min);}
+function gen(){
+    var names=["Rahul Sharma","Amit Verma","Neha Gupta","Priya Singh","Rohit Yadav","Sneha Kapoor"];
+    var g=["Male","Female"];
+    let name = names[r(0,names.length)];
+    let gender = g[r(0,2)];
+    let dob = ("0"+r(1,29)).slice(-2)+"/"+("0"+r(1,13)).slice(-2)+"/"+r(1970,2005);
+    let aadhaar = r(1000,9999)+" "+r(1000,9999)+" "+r(1000,9999);
+    document.getElementById("name").innerHTML = name;
+    document.getElementById("gender").innerHTML = gender;
+    document.getElementById("dob").innerHTML = dob;
+    document.getElementById("aadhaar").innerHTML = aadhaar;
+    document.getElementById("b_name").innerHTML = name;
+    document.getElementById("b_dob").innerHTML = dob;
+    document.getElementById("b_gender").innerHTML = gender;
+    document.getElementById("b_aadhaar").innerHTML = aadhaar;
+    document.getElementById("photo").src = "https://randomuser.me/api/portraits/" + (gender=="Male"?"men":"women") + "/" + r(1,90) + ".jpg";
+    let qrData = name + " | " + dob + " | " + aadhaar;
+    document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" + encodeURIComponent(qrData);
+}
+function download(){
+    html2canvas(document.querySelector(".front")).then(canvas=>{
+        let link=document.createElement("a");
+        link.download="aadhaar.png";
+        link.href=canvas.toDataURL();
+        link.click();
+    });
+}
+setTimeout(gen,200);
+
+// ----------------- INITIAL LOAD -----------------
+renderLangOptions();
+setLang(currentLang);
+setTheme(0);
+</script>
+</body>
+</html>
